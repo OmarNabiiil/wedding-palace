@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".HallDetailsFragment">
+
+    <TextView
+        android:id="@+id/close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:drawableStart="@drawable/ic_close_black_24dp"/>
+
+    <ImageView
+        android:id="@+id/hallImage"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/close"
+        android:src="@drawable/background"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#b9b9b9"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_below="@id/hallImage"/>
+
+    <TextView
+        android:id="@+id/labelName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hall Name:"
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:textSize="14sp"
+        android:layout_margin="16dp"
+        android:layout_below="@id/hallImage"/>
+
+    <TextView
+        android:id="@+id/hallName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pepsi can"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/hallImage"
+        android:layout_toEndOf="@id/labelName"/>
+
+    <TextView
+        android:id="@+id/labelType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hall Type:"
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:textSize="14sp"
+        android:layout_margin="16dp"
+        android:layout_below="@id/hallName"/>
+
+    <TextView
+        android:id="@+id/hallType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Drinks"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/hallName"
+        android:layout_toEndOf="@id/labelType"/>
+
+    <TextView
+        android:id="@+id/labelPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hall Price:"
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:textSize="14sp"
+        android:layout_margin="16dp"
+        android:layout_below="@id/hallType"/>
+
+    <TextView
+        android:id="@+id/hallPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="5 LE"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/hallType"
+        android:layout_toEndOf="@id/labelPrice"/>
+
+    <TextView
+        android:id="@+id/labelLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hall location:"
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:textSize="14sp"
+        android:layout_margin="16dp"
+        android:layout_below="@id/hallPrice" />
+
+    <android.support.design.button.MaterialButton
+        android:id="@+id/hallLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="view on maps"
+        app:backgroundTint="@color/colorAccent"
+        android:layout_below="@id/hallPrice"
+        android:layout_toEndOf="@id/labelLocation"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/hallLocation"
+        android:background="#c1c1c1"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_below="@id/hallLocation"></android.support.v7.widget.RecyclerView>
+
+</RelativeLayout>
