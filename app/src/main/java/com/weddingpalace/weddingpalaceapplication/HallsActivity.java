@@ -2,26 +2,39 @@ package com.weddingpalace.weddingpalaceapplication;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HallsActivity extends AppCompatActivity implements HallsAdapter.ItemClickListener, IReserveClick {
 
     private RecyclerView recyclerView;
     private List<Hall> hallsList;
+    private List<Package> packagesList;
     private HallsAdapter mAdapter;
+    private String[] userAnswers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,14 +50,12 @@ public class HallsActivity extends AppCompatActivity implements HallsAdapter.Ite
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
 
+        userAnswers = getIntent().getStringArrayExtra("answers");
+
         getAllHalls();
     }
 
-    private void getAllHalls() {
-
-        Location hallLocation = new Location("");
-        hallLocation.setLatitude(33.2432);
-        hallLocation.setLongitude(-33.2432);
+    private void getAllHallsDummy() {
 
         List<ReservationTime> reservationTimes = new ArrayList<>();
 
@@ -56,13 +67,9 @@ public class HallsActivity extends AppCompatActivity implements HallsAdapter.Ite
         reservationTimes.add(reservationTime);
         reservationTime = new ReservationTime("4/6/2019  6 pm : 11 pm", false);
         reservationTimes.add(reservationTime);
-        Hall h = new Hall("", "El Lottouse", HallType.OPEN_AIR, hallLocation, ReservationType.WEDDING, 50000.0);
+        Hall h = new Hall("", "El Lottouse", HallType.HALL, "", ReservationType.WEDDING, 50000);
         h.setReservationTimes(reservationTimes);
         hallsList.add(h);
-
-        hallLocation = new Location("");
-        hallLocation.setLatitude(33.2432);
-        hallLocation.setLongitude(-33.2432);
 
         reservationTimes = new ArrayList<>();
 
@@ -75,13 +82,10 @@ public class HallsActivity extends AppCompatActivity implements HallsAdapter.Ite
         reservationTime = new ReservationTime("4/6/2019  6 pm : 11 pm", false);
         reservationTimes.add(reservationTime);
 
-        h = new Hall("", "El Lo2lo2a", HallType.OPEN_AIR, hallLocation, ReservationType.WEDDING, 36800.0);
+        h = new Hall("", "El Lo2lo2a", HallType.HALL, "", ReservationType.WEDDING, 36800);
         h.setReservationTimes(reservationTimes);
         hallsList.add(h);
 
-        hallLocation = new Location("");
-        hallLocation.setLatitude(33.2432);
-        hallLocation.setLongitude(-33.2432);
         reservationTimes = new ArrayList<>();
 
         reservationTime = new ReservationTime("1/6/2019  6 pm : 11 pm", false);
@@ -93,13 +97,10 @@ public class HallsActivity extends AppCompatActivity implements HallsAdapter.Ite
         reservationTime = new ReservationTime("4/6/2019  6 pm : 11 pm", false);
         reservationTimes.add(reservationTime);
 
-        h = new Hall("", "Diamond Hall", HallType.OPEN_AIR, hallLocation, ReservationType.WEDDING, 66000.0);
+        h = new Hall("", "Diamond Hall", HallType.HALL, "", ReservationType.WEDDING, 66000);
         h.setReservationTimes(reservationTimes);
         hallsList.add(h);
 
-        hallLocation = new Location("");
-        hallLocation.setLatitude(33.2432);
-        hallLocation.setLongitude(-33.2432);
         reservationTimes = new ArrayList<>();
 
         reservationTime = new ReservationTime("1/6/2019  6 pm : 11 pm", false);
@@ -111,13 +112,10 @@ public class HallsActivity extends AppCompatActivity implements HallsAdapter.Ite
         reservationTime = new ReservationTime("4/6/2019  6 pm : 11 pm", false);
         reservationTimes.add(reservationTime);
 
-        h = new Hall("", "Square Hall", HallType.OPEN_AIR, hallLocation, ReservationType.WEDDING, 52000.0);
+        h = new Hall("", "Square Hall", HallType.HALL, "", ReservationType.WEDDING, 52000);
         h.setReservationTimes(reservationTimes);
         hallsList.add(h);
 
-        hallLocation = new Location("");
-        hallLocation.setLatitude(33.2432);
-        hallLocation.setLongitude(-33.2432);
         reservationTimes = new ArrayList<>();
 
         reservationTime = new ReservationTime("1/6/2019  6 pm : 11 pm", false);
@@ -129,7 +127,7 @@ public class HallsActivity extends AppCompatActivity implements HallsAdapter.Ite
         reservationTime = new ReservationTime("4/6/2019  6 pm : 11 pm", false);
         reservationTimes.add(reservationTime);
 
-        h = new Hall("", "Lolo Hall", HallType.OPEN_AIR, hallLocation, ReservationType.WEDDING, 47000.0);
+        h = new Hall("", "Lolo Hall", HallType.HALL, "", ReservationType.WEDDING, 47000);
         h.setReservationTimes(reservationTimes);
         hallsList.add(h);
 
@@ -168,66 +166,57 @@ public class HallsActivity extends AppCompatActivity implements HallsAdapter.Ite
     }
 
     @Override
-    public void onReserveClicked() {
-        openPackagesPage();
+    public void onReserveClicked(Hall hall, String date) {
+        getAllPackages(hall, date);
     }
 
-
-    private void openPackagesPage() {
+    private void openPackagesPage(final Hall hall, final String date) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        // String array for alert dialog multi choice items
-        String[] colors = new String[]{
-                "Photographer",
-                "Bands",
-                "MakeUp Artist",
-                "Belly Dancer"
-        };
+        String[] packages = getPackagesArray();
 
         // Boolean array for initial selected items
-        final boolean[] checkedColors = new boolean[]{
+        final boolean[] checkedPackage = new boolean[]{
                 false, // Red
                 false, // Green
                 false, // Blue
                 false, // Purple
-
         };
 
         // Convert the color array to list
-        final List<String> colorsList = Arrays.asList(colors);
+        final List<String> colorsList = Arrays.asList(packages);
 
-        builder.setMultiChoiceItems(colors, checkedColors, new DialogInterface.OnMultiChoiceClickListener() {
+        builder.setMultiChoiceItems(packages, checkedPackage, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-
                 // Update the current focused item's checked status
-                checkedColors[which] = isChecked;
-
+                checkedPackage[which] = isChecked;
                 // Get the current focused item
                 String currentItem = colorsList.get(which);
-
-
             }
         });
 
         // Specify the dialog is not cancelable
         builder.setCancelable(false);
-
         // Set a title for alert dialog
         builder.setTitle("Kindly select from our packages?");
-
         // Set the positive/yes button click listener
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Do something when click positive button
                 //tv.setText("Your preferred colors..... \n");
-                for (int i = 0; i<checkedColors.length; i++){
-                    boolean checked = checkedColors[i];
+                int totalPrice = 0;
+                for (int i = 0; i<checkedPackage.length; i++){
+                    boolean checked = checkedPackage[i];
                     if (checked) {
+                        totalPrice += packagesList.get(i).getPrice();
                         //tv.setText(tv.getText() + colorsList.get(i) + "\n");
                     }
                 }
+                totalPrice += hall.getPrice();
+
+                reserveDB(hall, date, totalPrice);
             }
         });
 
@@ -236,6 +225,7 @@ public class HallsActivity extends AppCompatActivity implements HallsAdapter.Ite
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Do something when click the negative button
+                reserveDB(hall, date, hall.getPrice());
             }
         });
 
@@ -244,11 +234,177 @@ public class HallsActivity extends AppCompatActivity implements HallsAdapter.Ite
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Do something when click the neutral button
+                Toast.makeText(HallsActivity.this, "reservation is canceled", Toast.LENGTH_SHORT).show();
             }
         });
 
         AlertDialog dialog = builder.create();
         // Display the alert dialog on interface
         dialog.show();
+    }
+
+    private String[] getPackagesArray() {
+        String[] packagesArray = new String[packagesList.size()];
+        for (int i = 0; i<packagesArray.length; i++){
+            Package myPackage = packagesList.get(i);
+            packagesArray[i] = myPackage.getName() + "  -  " + myPackage.getPrice() + " LE";
+        }
+        return packagesArray;
+    }
+
+    public void getAllHalls() {
+        // Tag used to cancel the request
+        String tag_string_req = "req_register";
+
+        String url = Config.GET_HALLS_URL;
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                url, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d("test", "Halls Response: " + response);
+                try {
+
+                    JSONArray a=new JSONArray(response);
+                    //Log.d("questionsTest",a.toString());
+                    int sizeOfArray=a.length();
+                    for(int i=0;i<sizeOfArray;i++){
+                        JSONObject jObj = a.getJSONObject(i);//all the users in the database
+
+                        Hall hall = new Gson().fromJson(jObj.toString(), Hall.class);
+                        Log.e("hallsTest",hall.getId() + " , " + hall.getName() + " , " + hall.getPrice());
+
+                        hallsList.add(hall);
+                        //questionsList.add(question);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                mAdapter.notifyDataSetChanged();
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("test", "Registration Error: " + error.getMessage());
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+
+                String[] priceRange = userAnswers[0].split(" - ");
+                String[] capacityRange = userAnswers[2].split(" - ");
+
+                Map<String, String> params = new HashMap<>();
+                params.put("minPrice", priceRange[0]);
+                params.put("maxPrice", priceRange[1]);
+                params.put("region", userAnswers[1]);
+                params.put("minCapacity", capacityRange[0]);
+                params.put("maxCapacity", capacityRange[1]);
+                params.put("hallType", userAnswers[3].equals("Hall")?"0":"1");
+                params.put("placeType", userAnswers[4].equals("Open Air")?"0":"1");
+
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        MyApplication.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    public void getAllPackages(final Hall hall, final String date) {
+        // Tag used to cancel the request
+        String tag_string_req = "req_register";
+
+        packagesList = new ArrayList<>();
+
+        String url = Config.GET_PACKAGES_URL;
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                url, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d("test", "Packages Response: " + response);
+                try {
+
+                    JSONArray a=new JSONArray(response);
+                    //Log.d("questionsTest",a.toString());
+                    int sizeOfArray=a.length();
+                    for(int i=0;i<sizeOfArray;i++){
+                        JSONObject jObj = a.getJSONObject(i);//all the users in the database
+
+                        Package aPackage = new Gson().fromJson(jObj.toString(), Package.class);
+                        //Log.e("hallsTest",hall.getId() + " , " + hall.getName() + " , " + hall.getPrice());
+
+                        packagesList.add(aPackage);
+                    }
+
+                    openPackagesPage(hall, date);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("test", "Registration Error: " + error.getMessage());
+            }
+        });
+
+        // Adding request to request queue
+        MyApplication.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    private void reserveDB(final Hall hall, final String date, final int totalPrice) {
+        // Tag used to cancel the request
+        String tag_string_req = "req_register";
+
+        String url = Config.RESERVE_URL;
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                url, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d("test", "Halls Response: " + response);
+                Toast.makeText(HallsActivity.this, "reserved successfully", Toast.LENGTH_SHORT).show();
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("test", "Registration Error: " + error.getMessage());
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+
+                Map<String, String> params = new HashMap<>();
+                params.put("hallId", hall.getId()+"");
+                params.put("userId", "1");
+                params.put("total_price", totalPrice+"");
+                params.put("date", date);
+
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        MyApplication.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 }

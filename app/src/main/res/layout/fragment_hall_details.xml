@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="140dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="4dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="10dp"
@@ -38,7 +38,7 @@
         android:id="@+id/labelName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hall Name:"
+        android:text="Name:"
         android:textStyle="bold"
         android:textColor="#000"
         android:textSize="14sp"
@@ -82,7 +82,7 @@
         android:id="@+id/labelPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hall Price:"
+        android:text="Price:"
         android:textStyle="bold"
         android:textColor="#000"
         android:textSize="14sp"
@@ -100,38 +100,57 @@
         android:layout_below="@id/hallType"
         android:layout_toEndOf="@id/labelPrice"/>
 
-    <TextView
-        android:id="@+id/labelLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hall location:"
-        android:textStyle="bold"
-        android:textColor="#000"
-        android:textSize="14sp"
-        android:layout_margin="16dp"
-        android:layout_below="@id/hallPrice" />
-
     <android.support.design.button.MaterialButton
         android:id="@+id/hallLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="view on maps"
+        android:text="view location"
+        android:layout_marginTop="8dp"
         app:backgroundTint="@color/colorAccent"
+        app:icon="@drawable/ic_location_on_black_24dp"
         android:layout_below="@id/hallPrice"
-        android:layout_toEndOf="@id/labelLocation"/>
+        android:layout_centerHorizontal="true"/>
 
     <View
+        android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_below="@id/hallLocation"
         android:background="#c1c1c1"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycerView"
+    <TextView
+        android:id="@+id/labelReservation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Reservation Date: "
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_below="@id/view"/>
+
+    <DatePicker
+        android:id="@+id/reservationDate"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_below="@id/labelReservation"
+        android:datePickerMode="spinner"
+        android:calendarViewShown="false"></DatePicker>
+
+    <android.support.design.button.MaterialButton
+        android:id="@+id/reserve"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_below="@id/hallLocation"></android.support.v7.widget.RecyclerView>
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="Reserve"
+        android:layout_below="@id/reservationDate"/>
 
 </RelativeLayout>
