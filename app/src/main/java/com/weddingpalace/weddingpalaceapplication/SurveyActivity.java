@@ -163,6 +163,25 @@ public class SurveyActivity extends AppCompatActivity {
 
                         questionsList.add(question);
                     }
+                    List<String> dateAnswers = new ArrayList<>();
+
+                    dateAnswers.add("current months");
+                    dateAnswers.add("after 1 months");
+                    dateAnswers.add("after 2 months");
+                    dateAnswers.add("after 3 months");
+                    dateAnswers.add("after 4 months");
+
+                    Question q = new Question("When do you prefer to have your wedding?", dateAnswers);
+                    questionsList.add(q);
+                    dateAnswers = new ArrayList<>();
+
+                    dateAnswers.add("first week");
+                    dateAnswers.add("second week");
+                    dateAnswers.add("third week");
+                    dateAnswers.add("fourth week");
+
+                    q = new Question("When do you prefer to have your wedding in the selected month?", dateAnswers);
+                    questionsList.add(q);
                     userAnswers = new String[questionsList.size()];
                     setQuestion();
 

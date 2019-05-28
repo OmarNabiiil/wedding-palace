@@ -5,4 +5,19 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="error_invalid_password">This password is too short!</string>
+    <string name="error_field_required">This field is required!</string>
+    <string name="error_invalid_email">This email is invalid!</string>
+    <string name="validation_mail">Please enter your mail</string>
+    <string name="format_mail">Email format is invalid</string>
+    <string name="password_validation">Please enter your password</string>
+    <string name="password_format">Password format is invalid</string>
+    <string name="password_confirmation">Please confirm the password</string>
+    <string name="password_match">Passwords doesn\'t match!</string>
+    <string name="validation_name">Please enter your name</string>
+    <string name="validation_mobile">Please enter your mobile</string>
+    <string name="format_mobile">Mobile number should be 11 digits only!</string>
+    <string name="format_mobile_starting_digit">Mobile number should start with 0</string>
+    <string name="format_name">Name format is invalid</string>
+    <string name="format_field">This field format is invalid</string>
 </resources>

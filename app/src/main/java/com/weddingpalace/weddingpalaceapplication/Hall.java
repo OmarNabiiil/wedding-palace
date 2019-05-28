@@ -18,6 +18,7 @@ public class Hall implements Serializable {
     private PlaceType placeType;
     private String location;
     private String region;
+    private int rating;
     private String capacity;
     @SerializedName("reservation_type")
     private ReservationType reservationType;
@@ -33,7 +34,7 @@ public class Hall implements Serializable {
         this.price = price;
     }
 
-    public Hall(int id, String image, String name, HallType hallType, PlaceType placeType, String location, String region, String capacity, ReservationType reservationType, int price) {
+    public Hall(int id, String image, String name, HallType hallType, PlaceType placeType, String location, String region, int rating, String capacity, ReservationType reservationType, int price, List<ReservationTime> reservationTimes) {
         this.id = id;
         this.image = image;
         this.name = name;
@@ -41,9 +42,11 @@ public class Hall implements Serializable {
         this.placeType = placeType;
         this.location = location;
         this.region = region;
+        this.rating = rating;
         this.capacity = capacity;
         this.reservationType = reservationType;
         this.price = price;
+        this.reservationTimes = reservationTimes;
     }
 
     public int getId() {
@@ -52,14 +55,6 @@ public class Hall implements Serializable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getImageUrl() {
-        return image;
-    }
-
-    public void setImageUrl(String image) {
-        this.image = image;
     }
 
     public String getName() {
@@ -140,5 +135,13 @@ public class Hall implements Serializable {
 
     public void setCapacity(String capacity) {
         this.capacity = capacity;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }

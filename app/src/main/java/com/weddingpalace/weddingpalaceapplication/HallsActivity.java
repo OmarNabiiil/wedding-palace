@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -157,17 +158,67 @@ public class HallsActivity extends AppCompatActivity implements HallsAdapter.Ite
     public void onViewClickListener(RecyclerView.ViewHolder viewHolder, int itemPosition) {
         Hall hall = hallsList.get(itemPosition);
 
+        String monthAndYear = getMonthAndYear(userAnswers[5]);
+
+        String startDay = getStartDay(userAnswers[6]);
+        String endDay = getEndDay(userAnswers[6]);
+
         HallDetailsFragment fr = new HallDetailsFragment();
         fr.setListener(this);
         Bundle b = new Bundle();
         b.putSerializable("hall", hall);
+        b.putString("startDate", startDay + "-" + monthAndYear);
+        b.putString("endDate", endDay + "-" + monthAndYear);
         fr.setArguments(b);
         fr.show(getSupportFragmentManager(), "fragment");
     }
 
+    private String getStartDay(String userAnswer) {
+        int startDay = 1;
+        switch (userAnswer){
+            case "first week": startDay += 0; break;
+            case "second week": startDay += 7; break;
+            case "third week": startDay += 14; break;
+            case "fourth week": startDay += 21; break;
+        }
+        Log.e("", "");
+        return startDay + "";
+    }
+
+    private String getEndDay(String userAnswer) {
+        int endDay = 7;
+        switch (userAnswer){
+            case "first week": endDay += 0; break;
+            case "second week": endDay += 7; break;
+            case "third week": endDay += 14; break;
+            case "fourth week": endDay += 21; break;
+        }
+
+        Log.e("", "");
+        return endDay + "";
+    }
+
+    private String getMonthAndYear(String userAnswer) {
+        Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH) +1;
+
+        switch (userAnswer){
+            case "current months": month += 0; break;
+            case "after 1 months": month += 1; break;
+            case "after 2 months": month += 2; break;
+            case "after 3 months": month += 3; break;
+            case "after 4 months": month += 4; break;
+        }
+
+        Log.e("", "");
+
+        return month + "-" + year;
+    }
+
     @Override
-    public void onReserveClicked(Hall hall, String date) {
-        getAllPackages(hall, date);
+    public void onReserveClicked(Hall hall, ReservationTime reservationTime) {
+        getAllPackages(hall, reservationTime.getDate());
     }
 
     private void openPackagesPage(final Hall hall, final String date) {
@@ -378,7 +429,7 @@ public class HallsActivity extends AppCompatActivity implements HallsAdapter.Ite
             @Override
             public void onResponse(String response) {
                 Log.d("test", "Halls Response: " + response);
-                Toast.makeText(HallsActivity.this, "reserved successfully", Toast.LENGTH_SHORT).show();
+                AlertDialogHelper.showAlert(HallsActivity.this, "Reserved successfully", "Your reservation has been submitted successfully \nWith total price = "+totalPrice+".\nYou need to pay a deposit (30%) within 3 days or your reservation will be canceled", "Ok");
 
             }
         }, new Response.ErrorListener() {
