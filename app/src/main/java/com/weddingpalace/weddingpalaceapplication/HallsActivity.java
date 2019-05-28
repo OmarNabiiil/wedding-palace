@@ -2,6 +2,7 @@ package com.weddingpalace.weddingpalaceapplication;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -150,7 +151,7 @@ public class HallsActivity extends AppCompatActivity implements HallsAdapter.Ite
     }
 
     private void goToLogInPage() {
-        //startActivity(new Intent(this, LoginActivity.class));
+        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 

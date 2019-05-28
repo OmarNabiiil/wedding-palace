@@ -152,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.equals("fail")){
                     counter ++;
                     if (counter == 3){
-                        
+
                         finish();
                     }else{
                         AlertDialogHelper.showAlert(LoginActivity.this, "Warning", "Login failed!", "Ok");
